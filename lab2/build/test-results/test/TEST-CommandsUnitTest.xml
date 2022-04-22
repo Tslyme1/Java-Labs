@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="CommandsUnitTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2022-04-22T12:28:07" hostname="DESKTOP-JL5VDRM" time="0.093">
+<testsuite name="CommandsUnitTest" tests="6" skipped="0" failures="0" errors="0" timestamp="2022-04-22T13:23:25" hostname="DESKTOP-JL5VDRM" time="0.33">
   <properties/>
-  <testcase name="defineTest()" classname="CommandsUnitTest" time="0.042"/>
-  <testcase name="saveFileTest()" classname="CommandsUnitTest" time="0.01"/>
-  <testcase name="wrongLoadFileTest()" classname="CommandsUnitTest" time="0.02"/>
-  <testcase name="loadFileTest()" classname="CommandsUnitTest" time="0.005"/>
-  <testcase name="commentsTest()" classname="CommandsUnitTest" time="0.006"/>
-  <testcase name="loadFileMistakesTest()" classname="CommandsUnitTest" time="0.006"/>
-  <system-out><![CDATA[22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'DEFINE' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '-' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '/' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:76) - TEST: defineTest - COMPLETED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '/' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'SAVE' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'AVG' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:180) - TEST: saveFileTest - COMPLETED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
-22-04-2022 19:28:07 ERROR [Test worker] (CommandsUnitTest.java:139) - UNABLE TO MAKE INPUT STREAM
+  <testcase name="defineTest()" classname="CommandsUnitTest" time="0.1"/>
+  <testcase name="saveFileTest()" classname="CommandsUnitTest" time="0.075"/>
+  <testcase name="wrongLoadFileTest()" classname="CommandsUnitTest" time="0.055"/>
+  <testcase name="loadFileTest()" classname="CommandsUnitTest" time="0.016"/>
+  <testcase name="commentsTest()" classname="CommandsUnitTest" time="0.034"/>
+  <testcase name="loadFileMistakesTest()" classname="CommandsUnitTest" time="0.03"/>
+  <system-out><![CDATA[22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'DEFINE' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '-' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '/' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandsUnitTest.java:76) - TEST: defineTest - COMPLETED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '/' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'SAVE' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'AVG' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandsUnitTest.java:180) - TEST: saveFileTest - COMPLETED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
+22-04-2022 20:23:25 ERROR [Test worker] (CommandsUnitTest.java:139) - UNABLE TO MAKE INPUT STREAM
 java.io.FileNotFoundException: src\test\resources\loadableFile3.txt (Не удается найти указанный файл)
 	at java.base/java.io.FileInputStream.open0(Native Method)
 	at java.base/java.io.FileInputStream.open(FileInputStream.java:211)
@@ -122,17 +122,17 @@ java.io.FileNotFoundException: src\test\resources\loadableFile3.txt (Не уда
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630)
 	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:56)
 	at java.base/java.lang.Thread.run(Thread.java:831)
-22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:154) - TEST: wrongLoadFileTest - COMPLETED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:102) - TEST: loadFileTest - COMPLETED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '*' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:51) - TEST: commentsTest - COMPLETED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
-22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:128) - TEST: loadFileMistakesTest - COMPLETED
+22-04-2022 20:23:25  INFO [Test worker] (CommandsUnitTest.java:154) - TEST: wrongLoadFileTest - COMPLETED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandsUnitTest.java:102) - TEST: loadFileTest - COMPLETED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '*' CLASS WAS UPLOADED
+22-04-2022 20:23:25  INFO [Test worker] (CommandsUnitTest.java:51) - TEST: commentsTest - COMPLETED
+22-04-2022 20:23:26  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
+22-04-2022 20:23:26  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
+22-04-2022 20:23:26  INFO [Test worker] (CommandsUnitTest.java:128) - TEST: loadFileMistakesTest - COMPLETED
 ]]></system-out>
   <system-err><![CDATA[]]></system-err>
 </testsuite>

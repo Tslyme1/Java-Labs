@@ -1,18 +1,18 @@
-]22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
-_22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'DEFINE' CLASS WAS UPLOADED
-Z22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '-' CLASS WAS UPLOADED
-Z22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '/' CLASS WAS UPLOADED
-c22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:76) - TEST: defineTest - COMPLETED
-]22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
-Z22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '/' CLASS WAS UPLOADED
-Z22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
-]22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
-]22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'SAVE' CLASS WAS UPLOADED
-\22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'AVG' CLASS WAS UPLOADED
-f22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:180) - TEST: saveFileTest - COMPLETED
-]22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
-]22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
-c22-04-2022 19:28:07 ERROR [Test worker] (CommandsUnitTest.java:139) - UNABLE TO MAKE INPUT STREAM
+]22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
+_22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'DEFINE' CLASS WAS UPLOADED
+Z22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '-' CLASS WAS UPLOADED
+Z22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '/' CLASS WAS UPLOADED
+c22-04-2022 20:23:25  INFO [Test worker] (CommandsUnitTest.java:76) - TEST: defineTest - COMPLETED
+]22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
+Z22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '/' CLASS WAS UPLOADED
+Z22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
+]22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
+]22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'SAVE' CLASS WAS UPLOADED
+\22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'AVG' CLASS WAS UPLOADED
+f22-04-2022 20:23:25  INFO [Test worker] (CommandsUnitTest.java:180) - TEST: saveFileTest - COMPLETED
+]22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
+]22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
+c22-04-2022 20:23:25 ERROR [Test worker] (CommandsUnitTest.java:139) - UNABLE TO MAKE INPUT STREAM
 �java.io.FileNotFoundException: src\test\resources\loadableFile3.txt (Не удается найти указанный файл)
 <	at java.base/java.io.FileInputStream.open0(Native Method)
 F	at java.base/java.io.FileInputStream.open(FileInputStream.java:211)
@@ -113,14 +113,14 @@
 _	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:630)
 k	at org.gradle.internal.concurrent.ThreadFactoryImpl$ManagedThreadRunnable.run(ThreadFactoryImpl.java:56)
 5	at java.base/java.lang.Thread.run(Thread.java:831)
-k22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:154) - TEST: wrongLoadFileTest - COMPLETED
-]22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
-Z22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
-f22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:102) - TEST: loadFileTest - COMPLETED
-]22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
-Z22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
-Z22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - '*' CLASS WAS UPLOADED
-e22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:51) - TEST: commentsTest - COMPLETED
-]22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
-]22-04-2022 19:28:07  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
-n22-04-2022 19:28:07  INFO [Test worker] (CommandsUnitTest.java:128) - TEST: loadFileMistakesTest - COMPLETED
+k22-04-2022 20:23:25  INFO [Test worker] (CommandsUnitTest.java:154) - TEST: wrongLoadFileTest - COMPLETED
+]22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
+Z22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
+f22-04-2022 20:23:25  INFO [Test worker] (CommandsUnitTest.java:102) - TEST: loadFileTest - COMPLETED
+]22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
+Z22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '+' CLASS WAS UPLOADED
+Z22-04-2022 20:23:25  INFO [Test worker] (CommandFabric.java:52) - '*' CLASS WAS UPLOADED
+e22-04-2022 20:23:25  INFO [Test worker] (CommandsUnitTest.java:51) - TEST: commentsTest - COMPLETED
+]22-04-2022 20:23:26  INFO [Test worker] (CommandFabric.java:52) - 'PUSH' CLASS WAS UPLOADED
+]22-04-2022 20:23:26  INFO [Test worker] (CommandFabric.java:52) - 'LOAD' CLASS WAS UPLOADED
+n22-04-2022 20:23:26  INFO [Test worker] (CommandsUnitTest.java:128) - TEST: loadFileMistakesTest - COMPLETED
