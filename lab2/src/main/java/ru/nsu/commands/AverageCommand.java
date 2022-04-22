@@ -1,6 +1,5 @@
 package ru.nsu.commands;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.nsu.exceptions.WrongElementsException;
 import ru.nsu.globalstrings.Messages;

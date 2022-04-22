@@ -1,6 +1,5 @@
 package ru.nsu.commands;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.nsu.exceptions.DivisionByZeroException;
 import ru.nsu.exceptions.OperationException;

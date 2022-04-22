@@ -1,14 +1,10 @@
 package ru.nsu.commands;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.nsu.exceptions.OperationException;
 import ru.nsu.globalstrings.Constants;
 import ru.nsu.globalstrings.Messages;
 import ru.nsu.stackcalculator.Calculator;
-import ru.nsu.stackcalculator.Operations;
-
-import java.util.Optional;
 
 @Slf4j
 public class PlusCommand extends Command {

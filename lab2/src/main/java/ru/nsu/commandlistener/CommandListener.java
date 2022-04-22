@@ -1,13 +1,10 @@
 package ru.nsu.commandlistener;
 
 import lombok.AllArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import ru.nsu.commands.Command;
 import ru.nsu.exceptions.*;
 import ru.nsu.fabric.CommandFabric;
-import ru.nsu.globalstrings.Messages;
-import ru.nsu.globalstrings.Regexes;
 import ru.nsu.globalstrings.SplitSymbols;
 import ru.nsu.stackcalculator.Calculator;
 

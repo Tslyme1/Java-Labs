@@ -3,7 +3,6 @@ package ru.nsu.commands;
 import ru.nsu.exceptions.*;
 import ru.nsu.stackcalculator.Calculator;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 public abstract class Command {
