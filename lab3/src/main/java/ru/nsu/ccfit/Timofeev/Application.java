@@ -9,5 +9,7 @@ public class Application {
         GameBoard gameBoard = new GameBoard();
         MainWindow mainWindow = new MainWindow();
         GameController gameController = new GameController(gameBoard, mainWindow);
+        gameController.addObserver(new MainWindow());
+        gameController.startGame();
     }
 }

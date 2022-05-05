@@ -1,14 +1,10 @@
 package ru.nsu.ccfit.Timofeev.controller;
 
 import ru.nsu.ccfit.Timofeev.model.GameType;
-import ru.nsu.ccfit.Timofeev.model.gameboard.GameBoardCell;
-import ru.nsu.ccfit.Timofeev.model.gameboard.cell.CellMarkStatus;
-import ru.nsu.ccfit.Timofeev.model.gameboard.cell.CellMineStatus;
-import ru.nsu.ccfit.Timofeev.model.gameboard.cell.CellRevealStatus;
 import ru.nsu.ccfit.Timofeev.model.gameboard.GameBoard;
 import ru.nsu.ccfit.Timofeev.model.records.Record;
 import ru.nsu.ccfit.Timofeev.model.records.RecordsTable;
-import ru.nsu.ccfit.Timofeev.view.GameImage;
+import ru.nsu.ccfit.Timofeev.observer.MyObserver;
 import ru.nsu.ccfit.Timofeev.view.windows.*;
 
 import java.awt.event.*;
@@ -32,70 +28,30 @@ public class GameController {
     public GameController(GameBoard gameBoard, MainWindow mainWindow) {
         this.gameBoard = gameBoard;
         this.mainWindow = mainWindow;
+        this.gameBoard.addObserver(mainWindow);
         recordsTable = new RecordsTable();
-        mainWindow.createGameField(gameBoard.getBoardHeight(), gameBoard.getBoardWidth());
-        mainWindow.setBombsCount(gameBoard.getNumberOfMines());
-        mainWindow.setNewGameMenuAction(new NewGameListener());
-        mainWindow.setAboutMenuAction(new AboutMenuListener());
-        mainWindow.setSettingsMenuAction(new SettingsMenuListener());
-        mainWindow.setExitMenuAction(new ExitListener());
-        mainWindow.setHighScoresMenuAction(new HighScoreMenuListener());
+    }
+
+    public void addObserver(MyObserver observer) {
+        gameBoard.addObserver(observer);
+    }
+
+    public void startGame() {
+        gameBoard.startNewGame();
+        gameBoard.setActionListener(new NewGameListener(), GameListenerType.NEW_GAME);
+        gameBoard.setActionListener(new AboutMenuListener(), GameListenerType.ABOUT_MENU);
+        gameBoard.setActionListener(new SettingsMenuListener(), GameListenerType.SETTINGS_MENU);
+        gameBoard.setActionListener(new ExitListener(), GameListenerType.EXIT);
+        gameBoard.setActionListener(new HighScoreMenuListener(), GameListenerType.HIGH_SCORES);
         addListenersToMines();
-        this.mainWindow.setVisible(true);
     }
 
     private void addListenersToMines() {
         for (int i = 0; i < gameBoard.getBoardHeight(); i++) {
             for (int j = 0; j < gameBoard.getBoardWidth(); j++) {
-                mainWindow.setMouseListenerToCell(i, j, new ClicksListener(i, j));
+                gameBoard.setMouseListener(new ClicksListener(i, j), GameListenerType.MOUSE, i, j);
             }
         }
-    }
-
-    private void repaintGameBoard() {
-        for (int i = 0; i < gameBoard.getBoardHeight(); i++) {
-            for (int j = 0; j < gameBoard.getBoardWidth(); j++) {
-                GameBoardCell tmpCell = gameBoard.getBoard()[i][j];
-                if (tmpCell.getMarkStatus() == CellMarkStatus.MARKED) {
-                    mainWindow.setCellImage(j, i, GameImage.MARKED);
-                } else if (tmpCell.getRevealStatus() == CellRevealStatus.UNREVEALED) {
-                    mainWindow.setCellImage(j, i, GameImage.CLOSED);
-                } else if (tmpCell.getMineStatus() == CellMineStatus.MINED) {
-                    mainWindow.setCellImage(j, i, GameImage.BOMB);
-                } else {
-                    switch (tmpCell.getNumberStatus()) {
-                        case 0 -> {
-                            mainWindow.setCellImage(j, i, GameImage.EMPTY);
-                        }
-                        case 1 -> {
-                            mainWindow.setCellImage(j, i, GameImage.NUM_1);
-                        }
-                        case 2 -> {
-                            mainWindow.setCellImage(j, i, GameImage.NUM_2);
-                        }
-                        case 3 -> {
-                            mainWindow.setCellImage(j, i, GameImage.NUM_3);
-                        }
-                        case 4 -> {
-                            mainWindow.setCellImage(j, i, GameImage.NUM_4);
-                        }
-                        case 5 -> {
-                            mainWindow.setCellImage(j, i, GameImage.NUM_5);
-                        }
-                        case 6 -> {
-                            mainWindow.setCellImage(j, i, GameImage.NUM_6);
-                        }
-                        case 7 -> {
-                            mainWindow.setCellImage(j, i, GameImage.NUM_7);
-                        }
-                        case 8 -> {
-                            mainWindow.setCellImage(j, i, GameImage.NUM_8);
-                        }
-                    }
-                }
-            }
-        }
-        mainWindow.repaint();
     }
 
     private void generateLoseWindow() {
@@ -150,8 +106,6 @@ public class GameController {
         public void actionPerformed(ActionEvent e) {
             stopTimer();
             gameBoard.startNewGame();
-            mainWindow.createGameField(gameBoard.getBoardHeight(), gameBoard.getBoardWidth());
-            mainWindow.setBombsCount(gameBoard.getNumberOfMines());
             addListenersToMines();
         }
     }
@@ -216,8 +170,6 @@ public class GameController {
                 stopTimer();
                 gameBoard.setGameType(tmpGameType);
                 gameBoard.startNewGame();
-                mainWindow.createGameField(gameBoard.getBoardHeight(), gameBoard.getBoardWidth());
-                mainWindow.setBombsCount(gameBoard.getNumberOfMines());
                 addListenersToMines();
             }
         }
@@ -254,59 +206,46 @@ public class GameController {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            GameBoardCell tmpCell = gameBoard.getBoard()[y][x];
             switch (e.getButton()) {
                 case MouseEvent.BUTTON1 -> {
                     if (gameBoard.isGameEnded()) {
                         break;
                     }
-                    if (!gameBoard.isGameStarted()) {
-                        gameBoard.placeMines(x, y);
-                        gameBoard.setGameStarted(true);
+                    if (!gameBoard.isGameStarted(y, x)) {
                         initTimer();
                     }
-                    if (tmpCell.getMarkStatus() == CellMarkStatus.MARKED) {
+                    if (gameBoard.isMarked(y, x)) {
                         break;
                     }
-                    if (gameBoard.openUnrevealedCell(y, x, true)) {
-                        gameBoard.setGameEnded(true);
-                    }
-                    repaintGameBoard();
+                    gameBoard.openUnrevealedCell(y, x, true, true);
                     if (gameBoard.isGameEnded()) {
                         stopTimer();
                         generateLoseWindow();
                     }
-                    if (gameBoard.getNumberOfCells() - gameBoard.getNumberOfOpenedCells() ==
-                            gameBoard.getNumberOfMines()) {
+                    if (gameBoard.isVictory()) {
                         stopTimer();
                         if (recordsTable.isItRecord(time, gameBoard.getGameType())) {
                             generateRecordWindow();
                         }
                         generateWinWindow();
                     }
-                    mainWindow.setBombsCount(gameBoard.getNumberOfMines() -
-                            gameBoard.getNumberOfFlags());
                 }
                 case MouseEvent.BUTTON2 -> {
                     if (gameBoard.isGameEnded()) {
                         break;
                     }
-                    if (tmpCell.getRevealStatus() == CellRevealStatus.UNREVEALED) {
+                    if (gameBoard.isUnrevealed(y, x)) {
                         break;
                     }
-                    if (tmpCell.getNumberStatus() == 0) {
+                    if (gameBoard.isZeroNumberStatus(y, x)) {
                         break;
                     }
-                    if (!gameBoard.scanNumber(y, x)) {
-                        gameBoard.setGameEnded(true);
-                    }
-                    repaintGameBoard();
+                    gameBoard.scanNumber(y, x);
                     if (gameBoard.isGameEnded()) {
                         stopTimer();
                         generateLoseWindow();
                     }
-                    if (gameBoard.getNumberOfCells() - gameBoard.getNumberOfOpenedCells() ==
-                            gameBoard.getNumberOfMines()) {
+                    if (gameBoard.isVictory()) {
                         stopTimer();
                         if (recordsTable.isItRecord(time, gameBoard.getGameType())) {
                             generateRecordWindow();
@@ -315,23 +254,10 @@ public class GameController {
                     }
                 }
                 case MouseEvent.BUTTON3 -> {
-                    if (gameBoard.isGameEnded()) {
-                        break;
-                    }
-                    if (tmpCell.getRevealStatus() == CellRevealStatus.UNREVEALED) {
-                        if (tmpCell.getMarkStatus() == CellMarkStatus.UNMARKED) {
-                            gameBoard.placeFlag(y, x);
-                        } else {
-                            gameBoard.removeFlag(y, x);
-                        }
-                        mainWindow.setBombsCount(gameBoard.getNumberOfMines() -
-                                gameBoard.getNumberOfFlags());
-                        repaintGameBoard();
-                    }
+                    gameBoard.updateFlags(y, x);
                 }
                 default -> {
                 }
-                // Other mouse buttons are ignored
             }
         }
 

@@ -2,19 +2,27 @@ package ru.nsu.ccfit.Timofeev.model.gameboard;
 
 import lombok.Getter;
 import lombok.Setter;
+import ru.nsu.ccfit.Timofeev.controller.GameListenerType;
+import ru.nsu.ccfit.Timofeev.model.GameStatus;
 import ru.nsu.ccfit.Timofeev.model.GameType;
 import ru.nsu.ccfit.Timofeev.model.gameboard.cell.CellMarkStatus;
 import ru.nsu.ccfit.Timofeev.model.gameboard.cell.CellMineStatus;
 import ru.nsu.ccfit.Timofeev.model.gameboard.cell.CellRevealStatus;
 import ru.nsu.ccfit.Timofeev.model.gameboard.cell.ListedCellCoords;
 import ru.nsu.ccfit.Timofeev.model.gameboard.cell.CellArea;
+import ru.nsu.ccfit.Timofeev.observer.GameUpdates;
+import ru.nsu.ccfit.Timofeev.observer.MyObserver;
+import ru.nsu.ccfit.Timofeev.observer.Observable;
 
+import java.awt.event.ActionListener;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 @Setter
 @Getter
-public class GameBoard {
+public class GameBoard implements Observable {
 
     private static final int NOVICE_MINES_NUMBER = 10;
     private static final int MEDIUM_MINES_NUMBER = 40;
@@ -27,6 +35,7 @@ public class GameBoard {
     private static final int EXPERT_BOARD_HEIGHT = 16;
 
     private final Random random = new Random();
+    private final List<MyObserver> observerList;
 
     private int boardWidth;
     private int boardHeight;
@@ -38,10 +47,11 @@ public class GameBoard {
     private GameType gameType;
     private boolean isGameStarted;
     private boolean isGameEnded;
+    private boolean isVictory;
 
     public GameBoard() {
+        observerList = new ArrayList<>();
         setGameType(GameType.NOVICE);
-        startNewGame();
     }
 
     public void setGameType(GameType gameType) {
@@ -51,6 +61,7 @@ public class GameBoard {
     public void startNewGame() {
         isGameStarted = false;
         isGameEnded = false;
+        isVictory = false;
         switch (this.gameType) {
             case NOVICE -> {
                 boardWidth = NOVICE_BOARD_WIDTH;
@@ -71,30 +82,43 @@ public class GameBoard {
         numberOfMines = takeMinesAmount();
         board = new GameBoardCell[boardHeight][boardWidth];
         initBoard();
+        notifyObservers(getUpdates(GameStatus.NEW));
     }
 
-    public void placeMines(int chosenX, int chosenY) {
-        ArrayList<ListedCellCoords> cellsList = listCells(chosenX, chosenY);
-        mineTheBoard(cellsList);
-        placeNumbers();
+    public boolean isGameStarted(int y, int x) {
+        if (isGameStarted) {
+            return true;
+        }
+        beginGame(x, y);
+        return false;
     }
 
-    public boolean openUnrevealedCell(int y, int x, boolean withFlagsRemove) {
+    public void openUnrevealedCell(int y, int x, boolean withFlagsRemove, boolean withUpdate) {
         GameBoardCell tmpCell = board[y][x];
         if (tmpCell.getMarkStatus() == CellMarkStatus.MARKED && withFlagsRemove) {
             tmpCell.setMarkStatus(CellMarkStatus.UNMARKED);
             numberOfFlags--;
         } else if (tmpCell.getMarkStatus() == CellMarkStatus.MARKED && !withFlagsRemove) {
-            return false;
+            if (withUpdate) {
+                notifyObservers(getUpdates(GameStatus.NOTHING));
+            }
+            return;
         }
         if (tmpCell.getRevealStatus() == CellRevealStatus.REVEALED) {
-            return false;
+            if (withUpdate) {
+                notifyObservers(getUpdates(GameStatus.NOTHING));
+            }
+            return;
         }
         board[y][x].setRevealStatus(CellRevealStatus.REVEALED);
         numberOfOpenedCells++;
         if (tmpCell.getMineStatus() == CellMineStatus.MINED) {
             setAllUnrevealed();
-            return true;
+            isGameEnded = true;
+            if (withUpdate) {
+                notifyObservers(getUpdates(GameStatus.PROCESS));
+            }
+            return;
         }
         if (tmpCell.getNumberStatus() == 0) {
             CellArea cellArea = new CellArea(boardWidth, boardHeight, y, x);
@@ -105,44 +129,103 @@ public class GameBoard {
                         continue;
                     }
                     if (board[i][j].getRevealStatus() == CellRevealStatus.UNREVEALED) {
-                        openUnrevealedCell(i, j, withFlagsRemove);
+                        openUnrevealedCell(i, j, withFlagsRemove, withUpdate);
                     }
                 }
             }
         }
-        return false;
+        if (numberOfCells - numberOfOpenedCells == numberOfMines) {
+            isVictory = true;
+            if (withUpdate) {
+                notifyObservers(getUpdates(GameStatus.PROCESS));
+            }
+            return;
+        }
+        if (withUpdate) {
+            notifyObservers(getUpdates(GameStatus.PROCESS));
+        }
     }
 
-    private boolean openArea(CellArea cellArea, int y, int x) {
+    public void scanNumber(int y, int x) {
+        GameBoardCell tmpCell = board[y][x];
+        if (tmpCell.getRevealStatus() == CellRevealStatus.UNREVEALED) {
+            return;
+        }
+        if (tmpCell.getNumberStatus() > 0) {
+            CellArea cellArea = new CellArea(boardWidth, boardHeight, y, x);
+            int flagsNumber = countFlagsInArea(cellArea, y, x);
+            if (flagsNumber != tmpCell.getNumberStatus()) {
+                return;
+            }
+            openArea(cellArea, y, x);
+            notifyObservers(getUpdates(GameStatus.PROCESS));
+        }
+    }
+
+    public boolean isMarked(int y, int x) {
+        return (board[y][x].getMarkStatus() == CellMarkStatus.MARKED);
+    }
+
+    public boolean isUnrevealed(int y, int x) {
+        return (board[y][x].getRevealStatus() == CellRevealStatus.UNREVEALED);
+    }
+
+    public boolean isZeroNumberStatus(int y, int x) {
+        return (board[y][x].getNumberStatus() == 0);
+    }
+
+    public void updateFlags(int y, int x) {
+        if (isGameEnded) {
+            return;
+        }
+        if (isUnrevealed(y, x)) {
+            if (isMarked(y, x)) {
+                removeFlag(y, x);
+                notifyObservers(getUpdates(GameStatus.PROCESS));
+                return;
+            }
+            if (isUnmarked(y, x)) {
+                placeFlag(y, x);
+                notifyObservers(getUpdates(GameStatus.PROCESS));
+            }
+        }
+    }
+
+    public void setActionListener(ActionListener actionListener, GameListenerType gameListenerType) {
+        notifyObservers(getUpdates(actionListener, gameListenerType));
+    }
+
+    public void setMouseListener(MouseListener mouseListener, GameListenerType gameListenerType,
+                                 int x, int y) {
+        notifyObservers(getUpdates(x, y, mouseListener, gameListenerType));
+    }
+
+    private void beginGame(int x, int y) {
+        placeMines(x, y);
+        isGameStarted = true;
+    }
+
+    private void placeMines(int chosenX, int chosenY) {
+        ArrayList<ListedCellCoords> cellsList = listCells(chosenX, chosenY);
+        mineTheBoard(cellsList);
+        placeNumbers();
+    }
+
+    private void openArea(CellArea cellArea, int y, int x) {
         for (int i = cellArea.getStartYPoint(); i < cellArea.getEndYPoint() + 1; i++) {
             for (int j = cellArea.getStartXPoint(); j < cellArea.getEndXPoint() + 1; j++) {
                 if (i == y && j == x) {
                     continue;
                 }
                 if (board[i][j].getRevealStatus() == CellRevealStatus.UNREVEALED) {
-                    if (openUnrevealedCell(i, j, false)) {
-                        return false;
-                    }
+                    openUnrevealedCell(i, j, false, false);
                 }
             }
         }
-        return true;
     }
 
-    public boolean scanNumber(int y, int x) {
-        GameBoardCell tmpCell = board[y][x];
-        if (tmpCell.getRevealStatus() == CellRevealStatus.UNREVEALED) {
-            return true;
-        }
-        if (tmpCell.getNumberStatus() > 0) {
-            CellArea cellArea = new CellArea(boardWidth, boardHeight, y, x);
-            int flagsNumber = countFlagsInArea(cellArea, y, x);
-            if (flagsNumber != tmpCell.getNumberStatus()) {
-                return true;
-            }
-            return openArea(cellArea, y, x);
-        }
-        return true;
+    private boolean isUnmarked(int y, int x) {
+        return (board[y][x].getMarkStatus() == CellMarkStatus.UNMARKED);
     }
 
     private int countFlagsInArea(CellArea cellArea, int y, int x) {
@@ -160,14 +243,14 @@ public class GameBoard {
         return flagsNumber;
     }
 
-    public void placeFlag(int y, int x) {
+    private void placeFlag(int y, int x) {
         if (numberOfMines > numberOfFlags) {
             board[y][x].setMarkStatus(CellMarkStatus.MARKED);
             numberOfFlags++;
         }
     }
 
-    public void removeFlag(int y, int x) {
+    private void removeFlag(int y, int x) {
         if (board[y][x].getMarkStatus() == CellMarkStatus.MARKED) {
             board[y][x].setMarkStatus(CellMarkStatus.UNMARKED);
             numberOfFlags--;
@@ -255,5 +338,58 @@ public class GameBoard {
                 board[i][j] = new GameBoardCell();
             }
         }
+    }
+
+    private GameUpdates getUpdates(GameStatus gameStatus) {
+        switch (gameStatus) {
+            case PROCESS -> {
+                return new GameUpdates(board, GameStatus.PROCESS, boardHeight,
+                        boardWidth, numberOfMines, numberOfFlags, null,
+                        null, null, null, null);
+            }
+            case NEW -> {
+                System.out.println(boardHeight + " " + boardWidth + " " + numberOfMines);
+                return new GameUpdates(board, GameStatus.NEW, boardHeight,
+                        boardWidth, numberOfMines, numberOfFlags, null,
+                        null, null, null, null);
+            }
+            case NOTHING -> {
+                return new GameUpdates(null, GameStatus.NOTHING, null,
+                        null, null, null, null,
+                        null, null, null, null);
+            }
+            case LISTENER_ADD -> {
+                return new GameUpdates(null, GameStatus.LISTENER_ADD, null,
+                        null, null, null, null,
+                        null, null, null, null);
+            }
+        }
+        return new GameUpdates(board, GameStatus.PROCESS, boardHeight, boardWidth, numberOfMines,
+                numberOfFlags, null, null, null,
+                null, null);
+    }
+
+    private GameUpdates getUpdates(ActionListener actionListener,
+                                   GameListenerType gameListenerType) {
+        return new GameUpdates(null, GameStatus.LISTENER_ADD, null, null,
+                null, null, actionListener, gameListenerType, null,
+                null, null);
+    }
+
+    private GameUpdates getUpdates(int x, int y, MouseListener mouseListener,
+                                   GameListenerType gameListenerType) {
+        return new GameUpdates(null, GameStatus.LISTENER_ADD, null, null,
+                null, null, null, gameListenerType,
+                mouseListener, x, y);
+    }
+
+    @Override
+    public void addObserver(MyObserver observer) {
+        observerList.add(observer);
+    }
+
+    @Override
+    public void notifyObservers(GameUpdates gameUpdates) {
+        observerList.forEach(x -> x.update(gameUpdates));
     }
 }

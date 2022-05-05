@@ -1,13 +1,19 @@
 package ru.nsu.ccfit.Timofeev.view.windows;
 
+import ru.nsu.ccfit.Timofeev.model.gameboard.GameBoardCell;
+import ru.nsu.ccfit.Timofeev.model.gameboard.cell.CellMarkStatus;
+import ru.nsu.ccfit.Timofeev.model.gameboard.cell.CellMineStatus;
+import ru.nsu.ccfit.Timofeev.model.gameboard.cell.CellRevealStatus;
 import ru.nsu.ccfit.Timofeev.view.GameImage;
+import ru.nsu.ccfit.Timofeev.observer.GameUpdates;
+import ru.nsu.ccfit.Timofeev.observer.MyObserver;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseListener;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements MyObserver {
     private final Container contentPane;
     private final GridBagLayout mainLayout;
 
@@ -35,6 +41,11 @@ public class MainWindow extends JFrame {
         contentPane.setBackground(new Color(144, 158, 184));
     }
 
+    public void setTimerValue(int value) {
+        timerLabel.setText(String.valueOf(value));
+    }
+
+
     private void createMenu() {
         JMenuBar menuBar = new JMenuBar();
         JMenu gameMenu = new JMenu("Game");
@@ -51,40 +62,36 @@ public class MainWindow extends JFrame {
         setJMenuBar(menuBar);
     }
 
-    public void setNewGameMenuAction(ActionListener listener) {
+    private void setNewGameMenuAction(ActionListener listener) {
         newGameMenu.addActionListener(listener);
     }
 
-    public void setAboutMenuAction(ActionListener listener) {
+    private void setAboutMenuAction(ActionListener listener) {
         aboutMenu.addActionListener(listener);
     }
 
-    public void setHighScoresMenuAction(ActionListener listener) {
+    private void setHighScoresMenuAction(ActionListener listener) {
         highScoresMenu.addActionListener(listener);
     }
 
-    public void setSettingsMenuAction(ActionListener listener) {
+    private void setSettingsMenuAction(ActionListener listener) {
         settingsMenu.addActionListener(listener);
     }
 
-    public void setExitMenuAction(ActionListener listener) {
+    private void setExitMenuAction(ActionListener listener) {
         exitMenu.addActionListener(listener);
     }
 
-    public void setCellImage(int x, int y, GameImage gameImage) {
+    private void setCellImage(int x, int y, GameImage gameImage) {
         cellButtons[y][x].setIcon(gameImage.getImageIcon());
     }
 
-    public void setBombsCount(int bombsCount) {
+    private void setBombsCount(int bombsCount) {
         bombsCounterLabel.setText(String.valueOf(bombsCount));
         repaint();
     }
 
-    public void setTimerValue(int value) {
-        timerLabel.setText(String.valueOf(value));
-    }
-
-    public void createGameField(int rowsCount, int colsCount) {
+    private void createGameField(int rowsCount, int colsCount) {
         contentPane.removeAll();
         setPreferredSize(new Dimension(20 * colsCount + 70, 20 * rowsCount + 110));
 
@@ -97,7 +104,7 @@ public class MainWindow extends JFrame {
         setLocationRelativeTo(null);
     }
 
-    public void setMouseListenerToCell(int y, int x, MouseListener mouseListener) {
+    private void setMouseListenerToCell(int y, int x, MouseListener mouseListener) {
         cellButtons[y][x].addMouseListener(mouseListener);
     }
 
@@ -174,5 +181,99 @@ public class MainWindow extends JFrame {
         gbc.weightx = 0.1;
         mainLayout.setConstraints(label, gbc);
         contentPane.add(label);
+    }
+
+    private void repaintBoard(GameBoardCell[][] board, int boardHeight, int boardWidth) {
+        for (int i = 0; i < boardHeight; i++) {
+            for (int j = 0; j < boardWidth; j++) {
+                GameBoardCell tmpCell = board[i][j];
+                if (tmpCell.getMarkStatus() == CellMarkStatus.MARKED) {
+                    setCellImage(j, i, GameImage.MARKED);
+                } else if (tmpCell.getRevealStatus() == CellRevealStatus.UNREVEALED) {
+                    setCellImage(j, i, GameImage.CLOSED);
+                } else if (tmpCell.getMineStatus() == CellMineStatus.MINED) {
+                    setCellImage(j, i, GameImage.BOMB);
+                } else {
+                    switch (tmpCell.getNumberStatus()) {
+                        case 0 -> {
+                            setCellImage(j, i, GameImage.EMPTY);
+                        }
+                        case 1 -> {
+                            setCellImage(j, i, GameImage.NUM_1);
+                        }
+                        case 2 -> {
+                            setCellImage(j, i, GameImage.NUM_2);
+                        }
+                        case 3 -> {
+                            setCellImage(j, i, GameImage.NUM_3);
+                        }
+                        case 4 -> {
+                            setCellImage(j, i, GameImage.NUM_4);
+                        }
+                        case 5 -> {
+                            setCellImage(j, i, GameImage.NUM_5);
+                        }
+                        case 6 -> {
+                            setCellImage(j, i, GameImage.NUM_6);
+                        }
+                        case 7 -> {
+                            setCellImage(j, i, GameImage.NUM_7);
+                        }
+                        case 8 -> {
+                            setCellImage(j, i, GameImage.NUM_8);
+                        }
+                    }
+                }
+            }
+        }
+        repaint();
+    }
+
+    private void addListener(GameUpdates gameUpdates) {
+        switch (gameUpdates.getGameListenerType()) {
+            case EXIT -> {
+                setExitMenuAction(gameUpdates.getActionListener());
+            }
+            case NEW_GAME -> {
+                setNewGameMenuAction(gameUpdates.getActionListener());
+            }
+            case ABOUT_MENU -> {
+                setAboutMenuAction(gameUpdates.getActionListener());
+            }
+            case HIGH_SCORES -> {
+                setHighScoresMenuAction(gameUpdates.getActionListener());
+            }
+            case SETTINGS_MENU -> {
+                setSettingsMenuAction(gameUpdates.getActionListener());
+            }
+            case MOUSE -> {
+                setMouseListenerToCell(gameUpdates.getX(), gameUpdates.getY(),
+                        gameUpdates.getMouseListener());
+            }
+        }
+    }
+
+    @Override
+    public void update(GameUpdates gameUpdates) {
+
+        switch (gameUpdates.getGameStatus()) {
+            case PROCESS -> {
+                setBombsCount(gameUpdates.getMinesAmount() -
+                        gameUpdates.getFlagsAmount());
+                repaintBoard(gameUpdates.getGameBoard(), gameUpdates.getBoardHeight(),
+                        gameUpdates.getBoardWidth());
+            }
+            case NEW -> {
+                createGameField(gameUpdates.getBoardHeight(), gameUpdates.getBoardWidth());
+                setBombsCount(gameUpdates.getMinesAmount());
+                setVisible(true);
+                repaint();
+            }
+            case LISTENER_ADD -> {
+                addListener(gameUpdates);
+            }
+            case NOTHING -> {
+            }
+        }
     }
 }
